@@ -34,7 +34,6 @@ const main = async () => {
   let commitMessage = process.argv.slice(2).join(' ');
 
   if (!commitMessage) {
-    console.log('❌ Commit message not provided. Prompting for input...');
     commitMessage = await promptInput('Enter your commit message: ');
     if (!commitMessage.trim()) {
       console.error('❌ Commit message is required.');
