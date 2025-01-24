@@ -28,5 +28,10 @@ describe('UsersController', () => {
       const result = { id: 1, username: 'ryan', email: 'ryan@example.com' };
       expect(usersController.getUser(userId)).toEqual(result);
     });
+
+    it('should return null if user is not found', () => {
+      const userId = '999';
+      expect(usersController.getUser(userId)).toBeNull();
+    });
   });
 });
