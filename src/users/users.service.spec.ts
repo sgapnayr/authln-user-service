@@ -14,8 +14,8 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         {
-          provide: getRepositoryToken(User), // Mock the UserRepository
-          useClass: Repository, // Use TypeORM's Repository as a base mock
+          provide: getRepositoryToken(User),
+          useClass: Repository,
         },
       ],
     }).compile();
@@ -36,7 +36,6 @@ describe('UsersService', () => {
       password: 'password',
     };
 
-    // Mock the repository's create and save methods
     jest
       .spyOn(userRepository, 'create')
       .mockReturnValue(user as unknown as User);
@@ -74,7 +73,6 @@ describe('UsersService', () => {
       },
     ];
 
-    // Mock the repository's find method
     jest
       .spyOn(userRepository, 'find')
       .mockResolvedValue(users as unknown as User[]);

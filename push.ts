@@ -1,7 +1,6 @@
 import { exec } from 'child_process';
 import * as readline from 'readline';
 
-// Function to execute shell commands
 const executeCommand = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -15,7 +14,6 @@ const executeCommand = (command: string): Promise<string> => {
   });
 };
 
-// Function to prompt for input
 const promptInput = (query: string): Promise<string> => {
   const rl = readline.createInterface({
     input: process.stdin,
