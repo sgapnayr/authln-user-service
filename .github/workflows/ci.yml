@@ -48,3 +48,16 @@ jobs:
       # Step 8: Build application
       - name: Build application
         run: npm run build
+
+      # Step 9: Fetch secrets from Azure Key Vault
+      - name: Fetch secrets from Azure Key Vault
+        run: |
+          az login --service-principal --username ${{ secrets.AZURE_CLIENT_ID }} \
+            --password ${{ secrets.AZURE_CLIENT_SECRET }} \
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
+          export DB_HOST=$(az keyvault secret show --vault-name authln-keys-and-secrets --name DB-HOST --query value -o tsv)
+          echo "DB_HOST=$DB_HOST" >> $GITHUB_ENV
+
+      # Step 10: Verify Secrets
+      - name: Verify Secrets
+        run: "echo 'DB_HOST: ${{ env.DB_HOST }}'"

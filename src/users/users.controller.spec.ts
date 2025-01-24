@@ -1,20 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
 
 describe('UsersController', () => {
-  let controller: UsersController;
+  let usersController: UsersController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [UsersService],
     }).compile();
 
-    controller = module.get<UsersController>(UsersController);
+    usersController = module.get<UsersController>(UsersController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('getAllUsers', () => {
+    it('should return an array of users', () => {
+      const result = [
+        { id: 1, username: 'ryan', email: 'ryan@example.com' },
+        { id: 2, username: 'jane', email: 'jane@example.com' },
+      ];
+      expect(usersController.getAllUsers()).toEqual(result);
+    });
+  });
+
+  describe('getUser', () => {
+    it('should return a single user by ID', () => {
+      const userId = '1';
+      const result = { id: 1, username: 'ryan', email: 'ryan@example.com' };
+      expect(usersController.getUser(userId)).toEqual(result);
+    });
   });
 });
