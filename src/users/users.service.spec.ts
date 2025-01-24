@@ -17,15 +17,17 @@ describe('UsersService', () => {
   });
 
   it('should create a user', () => {
-    const username = 'ryan';
-    const email = 'ryan@example.com';
+    const username = 'mike';
+    const email = 'mike@example.com';
+    const password = 'password';
 
-    const result = service.createUser(username, email);
+    const result = service.createUser(username, email, password);
 
     expect(result).toEqual({
       id: 3, // Reflects the new ID logic
       username,
       email,
+      password,
     });
   });
 
