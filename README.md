@@ -51,23 +51,6 @@ To integrate secrets management:
 - Use `DefaultAzureCredential` for authentication.
 - Dynamically fetch secrets during application startup.
 
-Example snippet:
-
-```typescript
-import { DefaultAzureCredential } from '@azure/identity';
-import { SecretClient } from '@azure/keyvault-secrets';
-
-const keyVaultUrl = `https://your-key-vault-name.vault.azure.net`;
-
-const client = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
-
-async function loadSecrets() {
-  for await (const { name } of client.listPropertiesOfSecrets()) {
-    process.env[name] = (await client.getSecret(name)).value!;
-  }
-}
-```
-
 ## API Endpoints
 
 | Method | Endpoint     | Description              |
@@ -95,18 +78,6 @@ npm run test:cov
 ## CI/CD
 
 Secrets from Azure Key Vault can be accessed securely in CI/CD pipelines using GitHub Actions:
-
-```yaml
-- name: Authenticate with Azure
-  uses: azure/login@v1
-  with:
-    client-id: ${{ secrets.AZURE_CLIENT_ID }}
-    tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-    subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-- name: Fetch secrets from Azure Key Vault
-  run: az keyvault secret show --vault-name your-key-vault-name --name DB-HOST
-```
 
 ## Build
 
