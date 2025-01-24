@@ -1,116 +1,100 @@
 # AuthLN User Service
 
-The **AuthLN User Service** is a backend microservice for managing user data and authentication. It provides CRUD operations for users, supports secure storage of user information, and integrates seamlessly with other AuthLN ecosystem services.
+The **AuthLN User Service** is a backend microservice for managing user data and authentication with secure data storage and seamless integration capabilities.
 
 ## Features
 
-- Manage user accounts with full CRUD functionality.
-- Securely store and retrieve user data with Azure SQL.
-- Centralized secrets management with Azure Key Vault.
-- Modular and scalable architecture built with NestJS.
-- Provides user-specific attributes for authentication workflows (e.g., OAuth, SAML).
-- Seamless integration with other services in the AuthLN ecosystem.
+- CRUD operations for user management.
+- Secure data storage with Azure SQL.
+- Centralized secrets management using Azure Key Vault.
+- Built with scalable and modular NestJS architecture.
+- Authentication support for OAuth, SAML, and SSO workflows.
 
 ## Technologies
 
-- [NestJS](https://nestjs.com/) - Framework for building efficient and scalable server-side applications.
-- [Azure SQL](https://azure.microsoft.com/en-us/products/sql-database/) - Cloud database for secure data storage.
-- [Azure Key Vault](https://azure.microsoft.com/en-us/products/key-vault/) - Centralized secrets management solution.
-- [TypeScript](https://www.typescriptlang.org/) - Static typing for JavaScript.
+- **NestJS** - Scalable backend framework.
+- **Azure SQL** - Cloud-based relational database.
+- **Azure Key Vault** - Secure secrets management.
+- **TypeScript** - Typed JavaScript for robust development.
 
 ## Installation
 
-1. Clone the repository:
+1. **Clone the Repository**:
 
    ```bash
    git clone https://github.com/your-username/authln-user-service.git
    cd authln-user-service
    ```
 
-2. Install dependencies:
+2. **Install Dependencies**:
 
    ```bash
    npm install
    ```
 
-3. Configure Azure Key Vault for secrets management:
+3. **Configure Azure Key Vault**:
 
-   - Create an Azure Key Vault instance in the Azure portal.
-   - Add your secrets (e.g., database credentials) to the Key Vault.
-   - Example secrets:
-     ```
-     DB_HOST=authln-user-db.postgres.database.azure.com
-     DB_PORT=5432
-     DB_USER=your-username
-     DB_PASSWORD=your-password
-     DB_DATABASE=authln_user_service
-     ```
-   - Grant your application managed identity or service principal access to the Key Vault with the necessary permissions.
+   - Set up a Key Vault instance and add required secrets (e.g., database credentials).
+   - Assign proper access permissions to the application using a managed identity or service principal.
 
-4. Load secrets dynamically:
-
-   The application uses Azure Key Vault to fetch secrets dynamically. During startup, secrets are retrieved and loaded into `process.env`. No `.env` file is required if Azure Key Vault is properly configured.
-
-   Example in `src/config/secrets.ts`:
-
-   ```typescript
-   import { DefaultAzureCredential } from '@azure/identity';
-   import { SecretClient } from '@azure/keyvault-secrets';
-
-   const keyVaultName = 'your-key-vault-name';
-   const keyVaultUrl = `https://${keyVaultName}.vault.azure.net`;
-
-   const credential = new DefaultAzureCredential();
-   const client = new SecretClient(keyVaultUrl, credential);
-
-   export async function loadAllSecrets() {
-     const secretProperties = client.listPropertiesOfSecrets();
-     for await (const secretProperty of secretProperties) {
-       const secretName = secretProperty.name;
-       const secretValue = (await client.getSecret(secretName)).value!;
-       process.env[secretName.replace('-', '_')] = secretValue;
-     }
-   }
-   ```
-
-   Call `loadAllSecrets()` at application startup to load secrets.
-
-5. Start the service:
+4. **Start the Service**:
    ```bash
    npm run start:dev
    ```
 
-## Usage
+## Key Vault Integration
 
-- **Base URL**: `/users`
+The application dynamically retrieves secrets from Azure Key Vault. Secrets are loaded into `process.env` at runtime, eliminating the need for a `.env` file.
 
-| Method | Endpoint     | Description             |
-| ------ | ------------ | ----------------------- |
-| GET    | `/users`     | Fetch all users         |
-| GET    | `/users/:id` | Fetch a specific user   |
-| POST   | `/users`     | Create a new user       |
-| PATCH  | `/users/:id` | Update an existing user |
-| DELETE | `/users/:id` | Delete a user           |
+To integrate secrets management:
+
+- Use `DefaultAzureCredential` for authentication.
+- Dynamically fetch secrets during application startup.
+
+Example snippet:
+
+```typescript
+import { DefaultAzureCredential } from '@azure/identity';
+import { SecretClient } from '@azure/keyvault-secrets';
+
+const keyVaultUrl = `https://your-key-vault-name.vault.azure.net`;
+
+const client = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
+
+async function loadSecrets() {
+  for await (const { name } of client.listPropertiesOfSecrets()) {
+    process.env[name] = (await client.getSecret(name)).value!;
+  }
+}
+```
+
+## API Endpoints
+
+| Method | Endpoint     | Description              |
+| ------ | ------------ | ------------------------ |
+| GET    | `/users`     | Retrieve all users       |
+| GET    | `/users/:id` | Retrieve a specific user |
+| POST   | `/users`     | Create a new user        |
+| PATCH  | `/users/:id` | Update a user            |
+| DELETE | `/users/:id` | Delete a user            |
 
 ## Testing
 
-Run the tests using Jest:
+Run tests:
 
 ```bash
 npm run test
 ```
 
-To check test coverage:
+Check coverage:
 
 ```bash
 npm run test:cov
 ```
 
-## CI/CD with GitHub Actions
+## CI/CD
 
-The project includes a GitHub Actions pipeline for CI/CD. Secrets are securely fetched from Azure Key Vault during the pipeline execution.
-
-Example pipeline snippet:
+Secrets from Azure Key Vault can be accessed securely in CI/CD pipelines using GitHub Actions:
 
 ```yaml
 - name: Authenticate with Azure
@@ -121,20 +105,19 @@ Example pipeline snippet:
     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 - name: Fetch secrets from Azure Key Vault
-  run: |
-    az keyvault secret show --vault-name your-key-vault-name --name DB-HOST
+  run: az keyvault secret show --vault-name your-key-vault-name --name DB-HOST
 ```
 
 ## Build
 
-To build the application for production:
+Build the application:
 
 ```bash
 npm run build
 ```
 
-The build artifacts will be stored in the `dist/` directory.
+Artifacts are stored in the `dist/` directory.
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+Licensed under the MIT License. See the `LICENSE` file for details.
