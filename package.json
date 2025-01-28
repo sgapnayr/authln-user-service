@@ -22,6 +22,7 @@
     "push": "npm run format && npm run test && npm run lint && npm run type-check && npm run build && ts-node push.ts"
   },
   "dependencies": {
+    "@azure/app-configuration": "^1.8.0",
     "@azure/identity": "^4.6.0",
     "@azure/keyvault-secrets": "^4.9.0",
     "@nestjs/common": "^11.0.1",

@@ -2,9 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authln-user-service
-  namespace: authln
+  labels:
+    app: authln-user-service
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: authln-user-service
@@ -15,6 +16,30 @@ spec:
     spec:
       containers:
         - name: authln-user-service
-          image: ryanpaglioneauthln/authln-user-service:latest
+          image: authlnacr.azurecr.io/authln-user-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          env:
+            - name: KEY_VAULT_URL
+              value: 'https://authln-keys-and-secrets.vault.azure.net'
+          resources:
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
+            requests:
+              memory: '256Mi'
+              cpu: '250m'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authln-user-service
+spec:
+  selector:
+    app: authln-user-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: NodePort

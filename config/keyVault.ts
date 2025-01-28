@@ -11,6 +11,10 @@ const client = new SecretClient(keyVaultUrl, credential);
  * Fetch all secrets from Azure Key Vault
  * and set them as environment variables.
  */
+/**
+ * Fetch a specific secret value.
+ * @param secretName - The name of the secret.
+ */
 export async function loadAllSecrets() {
   try {
     const secretProperties = client.listPropertiesOfSecrets();
