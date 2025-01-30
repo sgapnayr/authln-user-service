@@ -1,12 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { RateLimitMiddleware } from '../common/middleware/rate-limit.middleware';
+import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use((req, res, next) => new RateLimitMiddleware().use(req, res, next));
+
+  app.use(
+    '/users',
+    rateLimit({
+      windowMs: 1 * 60 * 1000,
+      max: 100,
+      message: 'Too many requests, please try again later.',
+    }),
+  );
+
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();

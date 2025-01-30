@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authln-user-service
-          image: authlnacr.azurecr.io/authln-user-service:v4
+          image: authlnacr.azurecr.io/authln-user-service:v12
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -30,15 +30,3 @@ spec:
             requests:
               memory: '512Mi'
               cpu: '250m'
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 3
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 3000
-            initialDelaySeconds: 3
-            periodSeconds: 5
